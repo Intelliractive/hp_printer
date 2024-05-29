@@ -1,0 +1,4 @@
+name: hp_printer
+version: '${version}'
+main: intelliractive.hp_printer.Hp_printer
+api-version: '1.20'
