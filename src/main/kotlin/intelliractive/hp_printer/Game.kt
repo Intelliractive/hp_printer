@@ -1,11 +1,10 @@
 package intelliractive.hp_printer
 
-import org.bukkit.Bukkit
+import org.bukkit.*
 import org.bukkit.Bukkit.*
-import org.bukkit.ChatColor
-import org.bukkit.GameMode
-import org.bukkit.Material
 import org.bukkit.block.Block
+import org.bukkit.entity.Entity
+import org.bukkit.entity.FallingBlock
 import org.bukkit.event.EventHandler
 import org.bukkit.event.Listener
 import org.bukkit.event.player.PlayerJoinEvent
@@ -162,8 +161,10 @@ class Game(val plugin: Hp_printer) : Listener {
 
     private var gameStartTimer = Timer(5).apply {
         onTick = {
-            if (getServer().onlinePlayers.size == 10)
+            if (getServer().onlinePlayers.size == 10) {
+                dispatchCommand(getConsoleSender(), "playsound minecraft:block.bell.use ambient @a")
                 broadcastMessage("${ChatColor.GREEN}Starting in ${seconds}s${ChatColor.RESET}")
+            }
             else {
                 waitForMorePlayers()
                 runnable.cancel()
@@ -227,9 +228,10 @@ class Game(val plugin: Hp_printer) : Listener {
         // some time to look through the set of resources
         val preparationTimer = Timer(3).apply {
             onTick = {
-                if (getServer().onlinePlayers.size == 10 && isGamePlayable)
+                if (getServer().onlinePlayers.size == 10 && isGamePlayable) {
+                    dispatchCommand(getConsoleSender(), "playsound minecraft:block.note_block.didgeridoo ambient @a")
                     broadcastMessage("${ChatColor.DARK_GREEN}Get ready in ${seconds}s${ChatColor.RESET}")
-                else {
+                } else {
                     waitForMorePlayers()
                     runnable.cancel()
                 }
@@ -275,6 +277,7 @@ class Game(val plugin: Hp_printer) : Listener {
 
                 val roundTimer = Timer(10).apply {
                     onTick = {
+                        dispatchCommand(getConsoleSender(), "playsound minecraft:block.note_block.chime ambient @a")
                         dispatchCommand(
                             getConsoleSender(),
                             "title @a actionbar {\"text\": \"== $seconds ==\", \"color\": \"dark_yellow\"}"
@@ -293,17 +296,21 @@ class Game(val plugin: Hp_printer) : Listener {
         win(round)
     }
 
-    fun win(result: Int){
+    fun win(result: Int) {
         broadcastMessage("${ChatColor.WHITE}${ChatColor.MAGIC}${ChatColor.RESET}${ChatColor.GREEN}${ChatColor.BOLD}${ChatColor.UNDERLINE}==== YOU WIN ====${ChatColor.RESET}${ChatColor.WHITE}${ChatColor.MAGIC}${ChatColor.RESET}")
         broadcastMessage("${ChatColor.LIGHT_PURPLE}${ChatColor.BOLD}${ChatColor.ITALIC}You made $result lines out of ${pic.lines.size}!${ChatColor.RESET}")
         // play victory sound
-        getServer().onlinePlayers.forEach { it.gameMode = GameMode.SPECTATOR }
+        getServer().onlinePlayers.forEach {
+            it.gameMode = GameMode.SPECTATOR
+            it.playNote(it.location, Instrument.CHIME, Note.natural(5, Note.Tone.G))
+        }
     }
 
     fun lose(result: Int) {
         broadcastMessage("${ChatColor.WHITE}${ChatColor.MAGIC}${ChatColor.RESET}${ChatColor.DARK_RED}${ChatColor.BOLD}${ChatColor.UNDERLINE}==== GAME OVER ====${ChatColor.RESET}${ChatColor.WHITE}${ChatColor.MAGIC}${ChatColor.RESET}")
         broadcastMessage("${ChatColor.LIGHT_PURPLE}${ChatColor.BOLD}${ChatColor.ITALIC}You made $result lines out of ${pic.lines.size}!${ChatColor.RESET}")
         // play anvil sound
+        dispatchCommand(getConsoleSender(), "playsound minecraft:block.anvil.land ambient @a")
         getServer().onlinePlayers.forEach { it.gameMode = GameMode.SPECTATOR }
     }
 }
