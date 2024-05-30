@@ -1,7 +1,7 @@
 # Printer
 
 This is a mini-game for Hypixel I came up with. (An arcade one, I guess)
-<small style="background-color: goldenrod; border-radius: 10px; color: white;">For Spigot 1.20.6</small>
+<small style="background-color: goldenrod; border-radius: 10px; color: white;">Made with Spigot API v1.20.6</small>
 
 ---
 
@@ -40,3 +40,9 @@ Also [check out](images/map%20screenshots/) their map-represented references for
 ---
 
 ### [Download worlds](https://drive.google.com/drive/folders/1xa5tRADHr_8GRARBKP4jWXBDAHnidYo5?usp=sharing)
+
+---
+
+## Building
+
+Build with *Gradle* by executing the *shadowJar* task to easily include all libraries needed at runtime
