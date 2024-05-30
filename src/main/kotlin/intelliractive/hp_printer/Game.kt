@@ -164,8 +164,7 @@ class Game(val plugin: Hp_printer) : Listener {
             if (getServer().onlinePlayers.size == 10) {
                 dispatchCommand(getConsoleSender(), "playsound minecraft:block.bell.use ambient @a")
                 broadcastMessage("${ChatColor.GREEN}Starting in ${seconds}s${ChatColor.RESET}")
-            }
-            else {
+            } else {
                 waitForMorePlayers()
                 runnable.cancel()
             }
@@ -248,7 +247,8 @@ class Game(val plugin: Hp_printer) : Listener {
 
 
     fun validateLine(line: List<Material>, round: Int) {
-        if (line != output.reversed()[round].map { loc -> blockAt(loc.first, loc.second, loc.third) }) lose(round)
+        if (line != output.reversed()[round].map { loc -> blockAt(loc.first, loc.second, loc.third) }) isGamePlayable =
+            false
     }
 
     fun printLine(round: Int) {
@@ -290,8 +290,10 @@ class Game(val plugin: Hp_printer) : Listener {
                     }
                 }
                 roundTimer.countDown()
-            } else
+            } else {
                 lose(round)
+                return
+            }
         }
         win(round)
     }
@@ -299,9 +301,9 @@ class Game(val plugin: Hp_printer) : Listener {
     fun win(result: Int) {
         broadcastMessage("${ChatColor.WHITE}${ChatColor.MAGIC}${ChatColor.RESET}${ChatColor.GREEN}${ChatColor.BOLD}${ChatColor.UNDERLINE}==== YOU WIN ====${ChatColor.RESET}${ChatColor.WHITE}${ChatColor.MAGIC}${ChatColor.RESET}")
         broadcastMessage("${ChatColor.LIGHT_PURPLE}${ChatColor.BOLD}${ChatColor.ITALIC}You made $result lines out of ${pic.lines.size}!${ChatColor.RESET}")
-        // play victory sound
         getServer().onlinePlayers.forEach {
             it.gameMode = GameMode.SPECTATOR
+            // play victory sound
             it.playNote(it.location, Instrument.CHIME, Note.natural(5, Note.Tone.G))
         }
     }
