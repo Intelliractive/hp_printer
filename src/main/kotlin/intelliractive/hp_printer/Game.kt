@@ -181,7 +181,9 @@ class Game(val plugin: Hp_printer) : Listener {
     // count down from 10 to 0 if there are 10 players
     @EventHandler
     fun onPlayerJoin(event: PlayerJoinEvent) {
+        event.joinMessage = "${ChatColor.YELLOW}${event.player.name} joined (${getServer().onlinePlayers}/10)${ChatColor.RESET}"
         event.player.gameMode = GameMode.ADVENTURE
+        event.player.teleport(Location(world, -1.0, -55.0, 4.0))
 
         if (getServer().onlinePlayers.size == 10) {
             gameStartTimer.countDown()
